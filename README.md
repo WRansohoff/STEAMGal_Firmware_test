@@ -1,12 +1,14 @@
 # Overview
 
-This is some basic firmware for a board inspired by the 'Arduboy' project. I'm aiming for the same 'credit card' form-factor, but I've made a few tweaks to make this a potential platform for education about a wider variety of topics. I would like to emulate games written for the Arduboy project, but I'd also like to make the platform viable for other topics by breaking out the various unused pins. Ideally, people will be able to use this as both a standalone game platform and a general development board for interfacing with sensors, other forms of input/output, tec. I call it the 'STEAMGal'.
+This is some basic firmware for a board inspired by the 'Arduboy' project. I'm aiming for the same 'credit card' form-factor, but I've made a few tweaks to make this a potential platform for education about a wider variety of topics. I would like to emulate games written for the Arduboy project, but I'd also like to make the platform viable for other topics by breaking out the various unused pins. Ideally, people will be able to use this as both a standalone game platform and a general development board for interfacing with sensors, other forms of input/output, etc. I call it the 'STEAMGal'.
 
 The files under 'lib/' are probably not necessary, I just keep having GCC get confused about which 'libc's to use with armv6m for some reason.
 
 # Current Status
 
-Barely functional. The firmware simply initializes the system clock to 48MHz driven by the HSE crystal, then draws a test pattern to the OLED screen. It also sets up hardware interrupts to toggle the on-board LED on or off whenever any of the 6 buttons is pressed. But hey, at least it verifies that everything works (except the piezo buzzer).
+Barely functional. The firmware simply initializes the system clock to 48MHz driven by the HSE crystal, then draws a test pattern to the OLED screen. It also sets up hardware interrupts to toggle the on-board LED on or off whenever any of the 6 buttons except for 'B' is pressed. When the 'B' button is pressed, the buzzer plays a few tones.
+
+Well, at least it verifies that everything works.
 
 # Connections
 
@@ -49,6 +51,6 @@ The L051 would be more optimized for low-power applications, have a more accurat
 
 The board design is available under the 'board\_design\_v0' directory. It includes a circuit for 30-pin 128x64 SSD1306 monochrome OLED screens which seems to work, although I did crib that from the cheap 4-pin screen modules you can get off of ebay/aliexpress/etc for a few bucks. I've gotten several slightly different boards like that, and they all seem to use roughly the same design. Some of them omit the diode in the reset circuit, but since the screen has an onboard charge pump to generate a display bias voltage higher than 3.3V, I figure better safe than sorry.
 
-Here's the first version of the board as rendered by OshPark. It seems to work as expected, but the ribbon connection is just barely close enough to the cutout to fold the screen over; I'll be moving that a bit in the next revision, along with adding an EEPROM chip.
+Here's the first version of the board as rendered by OshPark. It seems to work as expected, but the ribbon connection is just barely close enough to the cutout to fold the screen over; I'll be moving that a bit in the next revision, along with adding an EEPROM chip. Also, the buzzer is sort of loud; I should probably add a potentiometer for volume control.
 
 ![STEAMGal\_V0](https://raw.githubusercontent.com/WRansohoff/STEAMGal_Firmware_test/master/board_design_v0/board_v0_render.png)

@@ -33,6 +33,7 @@
 .global delay_us
 .global delay_ms
 .global delay_s
+.global pulse_out_pin
 
 /*
  * Initialize an I2C peripheral with some fairly typical settings.
@@ -630,5 +631,41 @@ delay_s:
   BL   delay_cycles
   POP  { r0, r1, pc }
 .size delay_s, .-delay_s
+
+/*
+ * Pulse an output pin in a square wave pattern for N cycles.
+ * (~50% duty cycle)
+ * Expects:
+ *   r0: GPIOx output register address.
+ *   r1: Output pin(s) mask.
+ *   r2: Time between GPIO status change (microseconds)
+ *   r3: Number of pulses (1 pulse = 1 high/low cycle.)
+ */
+.section .text.pulse_out_pin,"ax",%progbits
+pulse_out_pin:
+    PUSH { r4, r5, r6, r7, lr }
+    MOVS r7, r0
+    MOVS r6, r3
+    pulse_out_pin_pulse:
+        // Pull the GPIO pin high.
+        MOVS r0, r7
+        LDR  r4, [r0]
+        ORRS r4, r4, r1
+        STR  r4, [r0]
+        MVNS r1, r1
+        MOVS r0, r2
+        BL   delay_us
+        // Pull the GPIO pin low.
+        MOVS r0, r7
+        LDR  r4, [r0]
+        ANDS r4, r4, r1
+        STR  r4, [r0]
+        MVNS r1, r1
+        MOVS r0, r2
+        BL   delay_us
+        SUBS r6, r6, #1
+        BNE  pulse_out_pin_pulse
+    POP  { r4, r5, r6, r7, pc }
+.size pulse_out_pin, .-pulse_out_pin
 
 #endif

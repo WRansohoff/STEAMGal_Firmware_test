@@ -11,6 +11,10 @@ extern void delay_cycles(unsigned int d);
 extern void delay_us(unsigned int d);
 extern void delay_ms(unsigned int d);
 extern void delay_s(unsigned int d);
+extern void pulse_out_pin(volatile void* gpiox_odr,
+                          unsigned int pulse_pinmask,
+                          unsigned int pulse_halfw,
+                          unsigned int num_pulses);
 
 // ----------------------
 // General global variables.

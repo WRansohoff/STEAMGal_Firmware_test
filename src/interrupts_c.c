@@ -56,8 +56,13 @@ if (EXTI_GetITStatus(EXTI_Line5) != RESET) {
 }
 if (EXTI_GetITStatus(EXTI_Line6) != RESET) {
   EXTI_ClearITPendingBit(EXTI_Line6);
-  // For now, just toggle the onboard LED.
-  uled_state = !uled_state;
+  // Play a tone on the buzzer.
+  // TODO: Mark a flag for processing in 'main'
+  // instead of performing lengthy logic in a
+  // hardware interrupt.
+  pulse_out_pin(&GPIOB->ODR, GPIO_Pin_0, 200, 500);
+  pulse_out_pin(&GPIOB->ODR, GPIO_Pin_0, 400, 500);
+  pulse_out_pin(&GPIOB->ODR, GPIO_Pin_0, 100, 250);
 }
 if (EXTI_GetITStatus(EXTI_Line7) != RESET) {
   EXTI_ClearITPendingBit(EXTI_Line7);
