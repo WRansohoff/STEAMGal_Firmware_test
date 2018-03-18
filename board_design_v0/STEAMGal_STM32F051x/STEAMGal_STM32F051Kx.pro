@@ -1,4 +1,4 @@
-update=Thu Mar  1 13:29:55 2018
+update=Sun Mar 18 00:04:11 2018
 version=1
 last_client=kicad
 [pcbnew]
@@ -58,4 +58,4 @@ LibName26=opto
 LibName27=atmel
 LibName28=contrib
 LibName29=valves
-LibName30=/home/vimes/Downloads/KiCAD_git/Libraries/custom_ICs
+LibName30=/home/vimes/Downloads/ARM/STEAMGal/basic_firmware/board_design_v0/custom_kicad_libs/custom_ICs
