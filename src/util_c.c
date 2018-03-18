@@ -442,6 +442,14 @@ void oled_draw_letter_c(int x, int y, char c, unsigned char color, char size) {
     w0 = OLED_CH_pls0;
     w1 = OLED_CH_hyp1pls1 & 0x0000FFFF;
   }
+  else if (c == '<') {
+    w0 = OLED_CH_lct0;
+    w1 = OLED_CH_lct1rct1 >> 16;
+  }
+  else if (c == '>') {
+    w0 = OLED_CH_rct0;
+    w1 = OLED_CH_lct1rct1 & 0x0000FFFF;
+  }
   oled_draw_letter(x, y, w0, w1, color, size);
 }
 
@@ -532,8 +540,8 @@ void draw_test_menu() {
   // Draw an outline.
   oled_draw_rect(0, 0, 128, 64, 4, 1);
   // Draw a vertical and horizontal line to split the screen
-  // into quarters. (Use 'draw_rect' for 2-px width)
-  oled_draw_rect(63, 0, 2, 64, 0, 1);
+  // into 3 panes. (Use 'draw_rect' for 2-px width)
+  oled_draw_rect(63, 0, 2, 31, 0, 1);
   oled_draw_rect(0, 31, 128, 2, 0, 1);
 
   // Draw the four option panels. The currently-selected one
@@ -561,11 +569,14 @@ void draw_test_menu() {
   // 'Set Buzzer Tone' option.
   if (menu_state == TEST_MENU_BUZZER_TONE) {
     draw_color = 1;
-    oled_draw_rect(0, 31, 63, 31, 0, draw_color);
+    oled_draw_rect(3, 31, 122, 31, 0, draw_color);
   }
   else { draw_color = 0; }
-  snprintf(oled_line_buf, 23, "%s", "Buzz Tone\0");
-  oled_draw_text(7, 36, oled_line_buf, !draw_color, 'S');
-  snprintf(oled_line_buf, 23, "%s", "KHz\0");
-  oled_draw_text(42, 46, oled_line_buf, !draw_color, 'S');
+  snprintf(oled_line_buf, 23, "%s", "Buzzer Tone:\0");
+  oled_draw_text(28, 36, oled_line_buf, !draw_color, 'S');
+  oled_draw_letter_c(44, 46, '<', !draw_color, 'S');
+  oled_draw_letter_i(52, 46, buzzer_tone, !draw_color, 'S');
+  oled_draw_letter_c(88, 46, '>', !draw_color, 'S');
+  snprintf(oled_line_buf, 23, "%s", "Cyc\0");
+  oled_draw_text(100, 46, oled_line_buf, !draw_color, 'S');
 }

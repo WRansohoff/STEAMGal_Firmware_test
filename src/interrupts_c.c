@@ -34,14 +34,14 @@ if (EXTI_GetITStatus(EXTI_Line2) != RESET) {
     menu_state = TEST_MENU_LED_TOGGLE;
   }
   else if (menu_state == TEST_MENU_BUZZER_TONE) {
-    // TODO: Adjust buzzer tone down in frequency.
+    buzzer_tone -= 5;
   }
 }
 if (EXTI_GetITStatus(EXTI_Line3) != RESET) {
   EXTI_ClearITPendingBit(EXTI_Line3);
   // 'Up' button.
   if (menu_state == TEST_MENU_BUZZER_TONE) {
-    menu_state = TEST_MENU_LED_TOGGLE;
+    menu_state = last_top_row;
   }
 }
 return;
@@ -56,6 +56,7 @@ if (EXTI_GetITStatus(EXTI_Line4) != RESET) {
   // 'Down' button.
   if (menu_state == TEST_MENU_LED_TOGGLE ||
       menu_state == TEST_MENU_SOUND_BUZZER) {
+    last_top_row = menu_state;
     menu_state = TEST_MENU_BUZZER_TONE;
   }
 }
@@ -66,20 +67,24 @@ if (EXTI_GetITStatus(EXTI_Line5) != RESET) {
     menu_state = TEST_MENU_SOUND_BUZZER;
   }
   else if (menu_state == TEST_MENU_BUZZER_TONE) {
-    // TODO: Adjust buzzer tone up in frequency.
+    buzzer_tone += 5;
   }
 }
 if (EXTI_GetITStatus(EXTI_Line6) != RESET) {
   EXTI_ClearITPendingBit(EXTI_Line6);
   // 'B' button.
-  // Play a tone on the buzzer.
-  buzzer_state = 1;
+  // Currently, do nothing.
 }
 if (EXTI_GetITStatus(EXTI_Line7) != RESET) {
   EXTI_ClearITPendingBit(EXTI_Line7);
   // 'A' button.
-  // For now, just toggle the onboard LED.
-  uled_state = !uled_state;
+  // Action depends on menu state.
+  if (menu_state == TEST_MENU_LED_TOGGLE) {
+    uled_state = !uled_state;
+  }
+  else if (menu_state == TEST_MENU_SOUND_BUZZER) {
+    buzzer_state = 1;
+  }
 }
 if (EXTI_GetITStatus(EXTI_Line8) != RESET) {
   EXTI_ClearITPendingBit(EXTI_Line8);

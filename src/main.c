@@ -7,7 +7,9 @@ int main(void) {
   // Define starting values for global variables.
   uled_state = 0;
   buzzer_state = 0;
+  buzzer_tone = 100;
   menu_state = TEST_MENU_LED_TOGGLE;
+  last_top_row = TEST_MENU_LED_TOGGLE;
   draw_color = 0;
 
   // Enable the GPIOA clock (buttons on pins A2-A7,
@@ -153,9 +155,7 @@ int main(void) {
 
     // Play a tone on the buzzer if applicable.
     if (buzzer_state) {
-      pulse_out_pin(&GPIOB->ODR, GPIO_Pin_0, 200, 500);
-      pulse_out_pin(&GPIOB->ODR, GPIO_Pin_0, 400, 500);
-      pulse_out_pin(&GPIOB->ODR, GPIO_Pin_0, 100, 250);
+      pulse_out_pin(&GPIOB->ODR, GPIO_Pin_0, buzzer_tone, 500);
       buzzer_state = 0;
     }
   }

@@ -22,7 +22,9 @@ extern void pulse_out_pin(volatile void* gpiox_odr,
 // Global variables.
 volatile unsigned char uled_state;
 volatile unsigned char buzzer_state;
+volatile unsigned int  buzzer_tone;
 volatile int menu_state;
+volatile int last_top_row;
 volatile unsigned char draw_color;
 
 // Declare a glocal 'GPIO_Init' struct for code autogenerators
@@ -151,5 +153,8 @@ char oled_line_buf[24];
 #define OLED_CH_hyp0     0x00080808
 #define OLED_CH_pls0     0x00081C08
 #define OLED_CH_hyp1pls1 0x00000000
+#define OLED_CH_lct0     0x00081422
+#define OLED_CH_rct0     0x00442810
+#define OLED_CH_lct1rct1 0x00000000
 
 #endif

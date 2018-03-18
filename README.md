@@ -6,9 +6,11 @@ The files under 'lib/' are probably not necessary, I just keep having GCC get co
 
 # Current Status
 
-Barely functional. The firmware simply initializes the system clock to 48MHz driven by the HSE crystal, then draws a test pattern to the OLED screen. It also sets up hardware interrupts to toggle the on-board LED on or off whenever any of the 6 buttons except for 'B' is pressed. When the 'B' button is pressed, the buzzer plays a few tones.
+Barely functional. The firmware simply initializes the system clock to 48MHz driven by the HSE crystal, then draws a test menu to the OLED screen.
 
-Well, at least it verifies that everything works.
+It sets up hardware interrupts for each of the 6 buttons - the 'B' button does nothing, the 'A' button selects a menu option, and the four arrow buttons move around the 3 menu panels. When the bottom 'buzzer tone' panel is selected, the left/right buttons change the tone of the buzzer sound which is made by the 'Buzzer Test' option.
+
+It's simple, but at least it verifies that everything works.
 
 # Connections
 
