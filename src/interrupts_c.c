@@ -29,13 +29,20 @@ return;
 void EXTI2_3_IRQ_handler(void) {
 if (EXTI_GetITStatus(EXTI_Line2) != RESET) {
   EXTI_ClearITPendingBit(EXTI_Line2);
-  // For now, just toggle the onboard LED.
-  uled_state = !uled_state;
+  // 'Left' button.
+  if (menu_state == TEST_MENU_SOUND_BUZZER) {
+    menu_state = TEST_MENU_LED_TOGGLE;
+  }
+  else if (menu_state == TEST_MENU_BUZZER_TONE) {
+    // TODO: Adjust buzzer tone down in frequency.
+  }
 }
 if (EXTI_GetITStatus(EXTI_Line3) != RESET) {
   EXTI_ClearITPendingBit(EXTI_Line3);
-  // For now, just toggle the onboard LED.
-  uled_state = !uled_state;
+  // 'Up' button.
+  if (menu_state == TEST_MENU_BUZZER_TONE) {
+    menu_state = TEST_MENU_LED_TOGGLE;
+  }
 }
 return;
 }
@@ -46,26 +53,31 @@ return;
 void EXTI4_15_IRQ_handler(void) {
 if (EXTI_GetITStatus(EXTI_Line4) != RESET) {
   EXTI_ClearITPendingBit(EXTI_Line4);
-  // For now, just toggle the onboard LED.
-  uled_state = !uled_state;
+  // 'Down' button.
+  if (menu_state == TEST_MENU_LED_TOGGLE ||
+      menu_state == TEST_MENU_SOUND_BUZZER) {
+    menu_state = TEST_MENU_BUZZER_TONE;
+  }
 }
 if (EXTI_GetITStatus(EXTI_Line5) != RESET) {
   EXTI_ClearITPendingBit(EXTI_Line5);
-  // For now, just toggle the onboard LED.
-  uled_state = !uled_state;
+  // 'Right' button.
+  if (menu_state == TEST_MENU_LED_TOGGLE) {
+    menu_state = TEST_MENU_SOUND_BUZZER;
+  }
+  else if (menu_state == TEST_MENU_BUZZER_TONE) {
+    // TODO: Adjust buzzer tone up in frequency.
+  }
 }
 if (EXTI_GetITStatus(EXTI_Line6) != RESET) {
   EXTI_ClearITPendingBit(EXTI_Line6);
+  // 'B' button.
   // Play a tone on the buzzer.
-  // TODO: Mark a flag for processing in 'main'
-  // instead of performing lengthy logic in a
-  // hardware interrupt.
-  pulse_out_pin(&GPIOB->ODR, GPIO_Pin_0, 200, 500);
-  pulse_out_pin(&GPIOB->ODR, GPIO_Pin_0, 400, 500);
-  pulse_out_pin(&GPIOB->ODR, GPIO_Pin_0, 100, 250);
+  buzzer_state = 1;
 }
 if (EXTI_GetITStatus(EXTI_Line7) != RESET) {
   EXTI_ClearITPendingBit(EXTI_Line7);
+  // 'A' button.
   // For now, just toggle the onboard LED.
   uled_state = !uled_state;
 }

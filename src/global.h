@@ -1,6 +1,8 @@
 #ifndef _VVC_GLOBAL_H
 #define _VVC_GLOBAL_H
 
+#include <stdio.h>
+
 #include "stm32f0xx.h"
 
 // Assembly methods.
@@ -17,18 +19,36 @@ extern void pulse_out_pin(volatile void* gpiox_odr,
                           unsigned int num_pulses);
 
 // ----------------------
-// General global variables.
+// Global variables.
 volatile unsigned char uled_state;
+volatile unsigned char buzzer_state;
+volatile int menu_state;
+volatile unsigned char draw_color;
 
-// Define a glocal 'GPIO_Init' struct for code autogenerators
+// Declare a glocal 'GPIO_Init' struct for code autogenerators
 // to use with the GPIO standard peripherals library.
 GPIO_InitTypeDef global_gpio_init_struct;
 // Ditto for EXTI and NVIC init structs (for hardware interrupts).
 EXTI_InitTypeDef global_exti_init_struct;
 NVIC_InitTypeDef global_nvic_init_struct;
-// Currently only 128x64-px monochrome. (1 Byte = 8 pixels)
+
+// Buffer for the OLED screen.
+// Currently only supports 128x64-px monochrome.
+// (1 Byte = 8 pixels)
 #define OLED_FB_SIZE (128*64)/8
 volatile unsigned char oled_fb[OLED_FB_SIZE];
+// Buffer for drawing lines of text to the OLED.
+char oled_line_buf[24];
+
+// Global defines.
+// Define some menu states.
+// This is a simple test menu to allow testing the basic
+// board functionality.
+#define TEST_MENU_LED_TOGGLE   0
+#define TEST_MENU_SOUND_BUZZER 1
+#define TEST_MENU_BUZZER_TONE  2
+// Define a simple monospace font; each character is 6x8 pixels,
+// which comes out to 6 bytes or 3 words for every 2 characters.
 #define OLED_CH_A0       0x1F688868
 #define OLED_CH_B0       0xFF898989
 #define OLED_CH_A1B1     0x1F007600
@@ -131,6 +151,5 @@ volatile unsigned char oled_fb[OLED_FB_SIZE];
 #define OLED_CH_hyp0     0x00080808
 #define OLED_CH_pls0     0x00081C08
 #define OLED_CH_hyp1pls1 0x00000000
-char oled_line_buf[24];
 
 #endif

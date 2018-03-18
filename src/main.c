@@ -4,14 +4,17 @@
  * Main program.
  */
 int main(void) {
-  // Initial global variables.
+  // Define starting values for global variables.
   uled_state = 0;
+  buzzer_state = 0;
+  menu_state = TEST_MENU_LED_TOGGLE;
+  draw_color = 0;
 
   // Enable the GPIOA clock (buttons on pins A2-A7,
-  // user LED on A12).
+  // user LED on pin A12).
   RCC_AHBPeriphClockCmd(RCC_AHBPeriph_GPIOA, ENABLE);
   // Enable the GPIOB clock (I2C1 used on pins B6/B7,
-  // buzzer on B0).
+  // buzzer on pin B0).
   RCC_AHBPeriphClockCmd(RCC_AHBPeriph_GPIOB, ENABLE);
   // Enable the I2C1 clock.
   RCC_APB1PeriphClockCmd(RCC_APB1Periph_I2C1, ENABLE);
@@ -115,6 +118,7 @@ int main(void) {
 
   while (1) {
     // Clear the screen.
+    /*
     oled_draw_rect(0, 0, 128, 64, 0, 0);
     // Draw an outline.
     oled_draw_rect(0, 0, 128, 64, 4, 1);
@@ -134,6 +138,8 @@ int main(void) {
     // Draw two individual pixels.
     oled_write_pixel(16, 52, 1);
     oled_write_pixel(18, 54, 1);
+    */
+    draw_test_menu();
     // Communicate the framebuffer to the OLED screen.
     i2c_display_framebuffer(0x40005400, &oled_fb);
 
@@ -143,6 +149,14 @@ int main(void) {
     }
     else {
       GPIOA->ODR &= ~GPIO_Pin_12;
+    }
+
+    // Play a tone on the buzzer if applicable.
+    if (buzzer_state) {
+      pulse_out_pin(&GPIOB->ODR, GPIO_Pin_0, 200, 500);
+      pulse_out_pin(&GPIOB->ODR, GPIO_Pin_0, 400, 500);
+      pulse_out_pin(&GPIOB->ODR, GPIO_Pin_0, 100, 250);
+      buzzer_state = 0;
     }
   }
   return 0;

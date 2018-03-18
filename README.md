@@ -1,6 +1,6 @@
 # Overview
 
-This is some basic firmware for a board inspired by the 'Arduboy' project. I'm aiming for the same 'credit card' form-factor, but I've made a few tweaks to make this a potential platform for education about a wider variety of topics. I would like to emulate games written for the Arduboy project, but I'd also like to make the platform viable for other topics by breaking out the various unused pins. Ideally, people will be able to use this as both a standalone game platform and a general development board for interfacing with sensors, other forms of input/output, etc. I call it the 'STEAMGal'.
+This is some basic firmware for a board inspired by the 'Arduboy' project. I'm aiming for the same 'credit card' form-factor, but I've made a few tweaks to make this a potential platform for education about a wider variety of topics. I would like to emulate games written for the Arduboy project, but I'd also like to make the platform viable for other topics by breaking out the various unused pins. Ideally, people will be able to use this as both a standalone game platform and a general development board for interfacing with sensors, other forms of input/output, etc. I call it the 'STEAMGal', after the acronym for Science, Technology, Engineering, Art, and Math. Some people don't like including the 'Art' part and it doesn't make sense in every context, but this is based off of a game platform and electronics can be used in plenty of creative pursuits.
 
 The files under 'lib/' are probably not necessary, I just keep having GCC get confused about which 'libc's to use with armv6m for some reason.
 
@@ -22,10 +22,10 @@ The 6 buttons are on pins A2-A7. (And a 'reset' button connected to the NRST pin
 
 * A2: Left
 * A3: Up
-* A4: Right
-* A5: Down
-* A6: 'A' button.
-* A7: 'B' button.
+* A4: Down
+* A5: Right
+* A6: 'B' button.
+* A7: 'A' button.
 
 I forgot to add an EEPROM module on the first revision of the board. Oops. Future revisions will probably have a 24LC16BT chip on the I2C1 bus, which will occupy addresses 0b1010xyzR, where 'x', 'y', and 'z' are used to select which of eight 2KB blocks to address.
 
