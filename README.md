@@ -44,3 +44,11 @@ Right now, only the STM32F051K8 core is supported. But I think that the same boa
 The F303 would allow more complex applications, as it has hardware instructions for floating-point calculations and DSP functions.
 
 The L051 would be more optimized for low-power applications, have a more accurate realtime clock peripheral, and come with built-in EEPROM.
+
+# Board Design
+
+The board design is available under the 'board\_design\_v0' directory. It includes a circuit for 30-pin 128x64 SSD1306 monochrome OLED screens which seems to work, although I did crib that from the cheap 4-pin screen modules you can get off of ebay/aliexpress/etc for a few bucks. I've gotten several slightly different boards like that, and they all seem to use roughly the same design. Some of them omit the diode in the reset circuit, but since the screen has an onboard charge pump to generate a display bias voltage higher than 3.3V, I figure better safe than sorry.
+
+Here's the first version of the board as rendered by OshPark. It seems to work as expected, but the ribbon connection is just barely close enough to the cutout to fold the screen over; I'll be moving that a bit in the next revision, along with adding an EEPROM chip.
+
+(todo)
