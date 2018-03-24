@@ -3,7 +3,15 @@
 
 #include <stdio.h>
 
+// Core includes.
 #include "stm32f0xx.h"
+#include "stm32_assert.h"
+// HAL includes.
+#include "stm32f0xx_hal_cortex.h"
+// LL includes.
+#include "stm32f0xx_ll_exti.h"
+#include "stm32f0xx_ll_gpio.h"
+#include "stm32f0xx_ll_system.h"
 
 // Assembly methods.
 extern void i2c_periph_init(unsigned int i2c_addr, unsigned int i2c_speed);
@@ -23,16 +31,11 @@ extern void pulse_out_pin(volatile void* gpiox_odr,
 volatile unsigned char uled_state;
 volatile unsigned char buzzer_state;
 volatile unsigned int  buzzer_tone;
+volatile unsigned int  buzzer_tone_hz;
+volatile unsigned int  buzzer_pulses;
 volatile int menu_state;
 volatile int last_top_row;
 volatile unsigned char draw_color;
-
-// Declare a glocal 'GPIO_Init' struct for code autogenerators
-// to use with the GPIO standard peripherals library.
-GPIO_InitTypeDef global_gpio_init_struct;
-// Ditto for EXTI and NVIC init structs (for hardware interrupts).
-EXTI_InitTypeDef global_exti_init_struct;
-NVIC_InitTypeDef global_nvic_init_struct;
 
 // Buffer for the OLED screen.
 // Currently only supports 128x64-px monochrome.

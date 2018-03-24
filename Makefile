@@ -9,17 +9,20 @@ ifeq ($(MCU), STM32F051K8)
 	CHIP_FILE = STM32F051K8T6
 	MCU_CLASS = F0
 	MCU_PERIPH_CLASS = STM32F051
-else ifeq($(MCU), STM32L051K8)
+	MCU_HAL_CLASS = STM32F051x8
+else ifeq ($(MCU), STM32L051K8)
 	# TODO: The L0-series will require moving from
 	# standard peripheral libraries to the CubeMX HAL.
 	CHIP_FILE = STM32L051K8T6
 	MCU_CLASS = L0
 	MCU_PERIPH_CLASS = STM32L051
-else ifeq($(MCU), STM32F303K8)
+	MCU_HAL_CLASS = STM32L051x8
+else ifeq ($(MCU), STM32F303K8)
 	# TODO: Support other pin-compatible QFP32 chips.
 	CHIP_FILE = STM32F303K8T6
 	MCU_CLASS = F3
 	MCU_PERIPH_CLASS = STM32F303
+	MCU_HAL_CLASS = STM32F303x8
 endif
 
 LD_SCRIPT = ${CHIP_FILE}.ld
@@ -69,6 +72,7 @@ CFLAGS += -D$(MCU)
 CFLAGS += -DVVC_$(MCU_CLASS)
 CFLAGS += -DUSE_STDPERIPH_DRIVER
 CFLAGS += -D$(MCU_PERIPH_CLASS)
+CFLAGS += -D$(MCU_HAL_CLASS)
 
 # Linker directives.
 LSCRIPT = ./ld/$(LD_SCRIPT)
@@ -91,17 +95,17 @@ AS_SRC += $(BOOT_FILE)
 C_SRC  += ./src/main.c
 C_SRC  += ./src/util_c.c
 C_SRC  += ./src/interrupts_c.c
-C_SRC  += ./src/std_periph/stm32f0xx_exti.c
-C_SRC  += ./src/std_periph/stm32f0xx_syscfg.c
-C_SRC  += ./src/std_periph/stm32f0xx_misc.c
-C_SRC  += ./src/std_periph/stm32f0xx_rcc.c
-C_SRC  += ./src/std_periph/stm32f0xx_gpio.c
+# TODO: Non-F0 chips.
+# HAL and LL libs.
+C_SRC  += ./src/hal_libs/stm32f0xx_hal_cortex.c
+C_SRC  += ./src/hal_libs/stm32f0xx_ll_exti.c
+C_SRC  += ./src/hal_libs/stm32f0xx_ll_gpio.c
 ## STD_PERIPH_SRCS
 
 # (other header file directories, if any)
 INCLUDE =  -I./src
-INCLUDE += -I./src/arm_include
-INCLUDE += -I./src/std_periph
+INCLUDE +=  -I./src/device_headers
+INCLUDE +=  -I./src/hal_libs
 
 OBJS =  $(AS_SRC:.S=.o)
 OBJS += $(C_SRC:.c=.o)

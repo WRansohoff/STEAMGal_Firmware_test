@@ -638,7 +638,7 @@ delay_s:
  * Expects:
  *   r0: GPIOx output register address.
  *   r1: Output pin(s) mask.
- *   r2: Time between GPIO status change (microseconds)
+ *   r2: Time between GPIO status change (in clock cycles)
  *   r3: Number of pulses (1 pulse = 1 high/low cycle.)
  */
 .section .text.pulse_out_pin,"ax",%progbits
@@ -654,7 +654,7 @@ pulse_out_pin:
         STR  r4, [r0]
         MVNS r1, r1
         MOVS r0, r2
-        BL   delay_us
+        BL   delay_cycles
         // Pull the GPIO pin low.
         MOVS r0, r7
         LDR  r4, [r0]
@@ -662,7 +662,7 @@ pulse_out_pin:
         STR  r4, [r0]
         MVNS r1, r1
         MOVS r0, r2
-        BL   delay_us
+        BL   delay_cycles
         SUBS r6, r6, #1
         BNE  pulse_out_pin_pulse
     POP  { r4, r5, r6, r7, pc }

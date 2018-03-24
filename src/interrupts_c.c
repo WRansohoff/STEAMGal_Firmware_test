@@ -14,11 +14,11 @@
  * EXTI0_1: Handle interrupt lines 0 and 1.
  */
 void EXTI0_1_IRQ_handler(void) {
-if (EXTI_GetITStatus(EXTI_Line0) != RESET) {
-  EXTI_ClearITPendingBit(EXTI_Line0);
+if (LL_EXTI_ReadFlag_0_31(LL_EXTI_LINE_0) != RESET) {
+  LL_EXTI_ClearFlag_0_31(LL_EXTI_LINE_0);
 }
-if (EXTI_GetITStatus(EXTI_Line1) != RESET) {
-  EXTI_ClearITPendingBit(EXTI_Line1);
+if (LL_EXTI_ReadFlag_0_31(LL_EXTI_LINE_1) != RESET) {
+  LL_EXTI_ClearFlag_0_31(LL_EXTI_LINE_1);
 }
 return;
 }
@@ -27,18 +27,21 @@ return;
  * EXTI2_3: Handle interrupt lines 2 and 3.
  */
 void EXTI2_3_IRQ_handler(void) {
-if (EXTI_GetITStatus(EXTI_Line2) != RESET) {
-  EXTI_ClearITPendingBit(EXTI_Line2);
+if (LL_EXTI_ReadFlag_0_31(LL_EXTI_LINE_2) != RESET) {
+  LL_EXTI_ClearFlag_0_31(LL_EXTI_LINE_2);
   // 'Left' button.
   if (menu_state == TEST_MENU_SOUND_BUZZER) {
     menu_state = TEST_MENU_LED_TOGGLE;
   }
   else if (menu_state == TEST_MENU_BUZZER_TONE) {
-    buzzer_tone -= 5;
+    buzzer_tone_hz -= 500;
+    if (buzzer_tone_hz <= 0) {
+      buzzer_tone_hz = 500;
+    }
   }
 }
-if (EXTI_GetITStatus(EXTI_Line3) != RESET) {
-  EXTI_ClearITPendingBit(EXTI_Line3);
+if (LL_EXTI_ReadFlag_0_31(LL_EXTI_LINE_3) != RESET) {
+  LL_EXTI_ClearFlag_0_31(LL_EXTI_LINE_3);
   // 'Up' button.
   if (menu_state == TEST_MENU_BUZZER_TONE) {
     menu_state = last_top_row;
@@ -51,8 +54,8 @@ return;
  * EXTI4_15: Handle interrupt lines between [4:15], inclusive.
  */
 void EXTI4_15_IRQ_handler(void) {
-if (EXTI_GetITStatus(EXTI_Line4) != RESET) {
-  EXTI_ClearITPendingBit(EXTI_Line4);
+if (LL_EXTI_ReadFlag_0_31(LL_EXTI_LINE_4) != RESET) {
+  LL_EXTI_ClearFlag_0_31(LL_EXTI_LINE_4);
   // 'Down' button.
   if (menu_state == TEST_MENU_LED_TOGGLE ||
       menu_state == TEST_MENU_SOUND_BUZZER) {
@@ -60,23 +63,26 @@ if (EXTI_GetITStatus(EXTI_Line4) != RESET) {
     menu_state = TEST_MENU_BUZZER_TONE;
   }
 }
-if (EXTI_GetITStatus(EXTI_Line5) != RESET) {
-  EXTI_ClearITPendingBit(EXTI_Line5);
+if (LL_EXTI_ReadFlag_0_31(LL_EXTI_LINE_5) != RESET) {
+  LL_EXTI_ClearFlag_0_31(LL_EXTI_LINE_5);
   // 'Right' button.
   if (menu_state == TEST_MENU_LED_TOGGLE) {
     menu_state = TEST_MENU_SOUND_BUZZER;
   }
   else if (menu_state == TEST_MENU_BUZZER_TONE) {
-    buzzer_tone += 5;
+    buzzer_tone_hz += 500;
+    if (buzzer_tone_hz >= 25000) {
+      buzzer_tone_hz = 25000;
+    }
   }
 }
-if (EXTI_GetITStatus(EXTI_Line6) != RESET) {
-  EXTI_ClearITPendingBit(EXTI_Line6);
+if (LL_EXTI_ReadFlag_0_31(LL_EXTI_LINE_6) != RESET) {
+  LL_EXTI_ClearFlag_0_31(LL_EXTI_LINE_6);
   // 'B' button.
   // Currently, do nothing.
 }
-if (EXTI_GetITStatus(EXTI_Line7) != RESET) {
-  EXTI_ClearITPendingBit(EXTI_Line7);
+if (LL_EXTI_ReadFlag_0_31(LL_EXTI_LINE_7) != RESET) {
+  LL_EXTI_ClearFlag_0_31(LL_EXTI_LINE_7);
   // 'A' button.
   // Action depends on menu state.
   if (menu_state == TEST_MENU_LED_TOGGLE) {
@@ -86,29 +92,29 @@ if (EXTI_GetITStatus(EXTI_Line7) != RESET) {
     buzzer_state = 1;
   }
 }
-if (EXTI_GetITStatus(EXTI_Line8) != RESET) {
-  EXTI_ClearITPendingBit(EXTI_Line8);
+if (LL_EXTI_ReadFlag_0_31(LL_EXTI_LINE_8) != RESET) {
+  LL_EXTI_ClearFlag_0_31(LL_EXTI_LINE_8);
 }
-if (EXTI_GetITStatus(EXTI_Line9) != RESET) {
-  EXTI_ClearITPendingBit(EXTI_Line9);
+if (LL_EXTI_ReadFlag_0_31(LL_EXTI_LINE_9) != RESET) {
+  LL_EXTI_ClearFlag_0_31(LL_EXTI_LINE_9);
 }
-if (EXTI_GetITStatus(EXTI_Line10) != RESET) {
-  EXTI_ClearITPendingBit(EXTI_Line10);
+if (LL_EXTI_ReadFlag_0_31(LL_EXTI_LINE_10) != RESET) {
+  LL_EXTI_ClearFlag_0_31(LL_EXTI_LINE_10);
 }
-if (EXTI_GetITStatus(EXTI_Line11) != RESET) {
-  EXTI_ClearITPendingBit(EXTI_Line11);
+if (LL_EXTI_ReadFlag_0_31(LL_EXTI_LINE_11) != RESET) {
+  LL_EXTI_ClearFlag_0_31(LL_EXTI_LINE_11);
 }
-if (EXTI_GetITStatus(EXTI_Line12) != RESET) {
-  EXTI_ClearITPendingBit(EXTI_Line12);
+if (LL_EXTI_ReadFlag_0_31(LL_EXTI_LINE_12) != RESET) {
+  LL_EXTI_ClearFlag_0_31(LL_EXTI_LINE_12);
 }
-if (EXTI_GetITStatus(EXTI_Line13) != RESET) {
-  EXTI_ClearITPendingBit(EXTI_Line13);
+if (LL_EXTI_ReadFlag_0_31(LL_EXTI_LINE_13) != RESET) {
+  LL_EXTI_ClearFlag_0_31(LL_EXTI_LINE_13);
 }
-if (EXTI_GetITStatus(EXTI_Line14) != RESET) {
-  EXTI_ClearITPendingBit(EXTI_Line14);
+if (LL_EXTI_ReadFlag_0_31(LL_EXTI_LINE_14) != RESET) {
+  LL_EXTI_ClearFlag_0_31(LL_EXTI_LINE_14);
 }
-if (EXTI_GetITStatus(EXTI_Line15) != RESET) {
-  EXTI_ClearITPendingBit(EXTI_Line15);
+if (LL_EXTI_ReadFlag_0_31(LL_EXTI_LINE_15) != RESET) {
+  LL_EXTI_ClearFlag_0_31(LL_EXTI_LINE_15);
 }
 return;
 }

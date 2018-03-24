@@ -575,7 +575,7 @@ void draw_test_menu() {
   snprintf(oled_line_buf, 23, "%s", "Buzzer Tone:\0");
   oled_draw_text(28, 36, oled_line_buf, !draw_color, 'S');
   oled_draw_letter_c(44, 46, '<', !draw_color, 'S');
-  oled_draw_letter_i(52, 46, buzzer_tone, !draw_color, 'S');
+  oled_draw_letter_i(52, 46, buzzer_tone_hz, !draw_color, 'S');
   oled_draw_letter_c(88, 46, '>', !draw_color, 'S');
   snprintf(oled_line_buf, 23, "%s", "Cyc\0");
   oled_draw_text(100, 46, oled_line_buf, !draw_color, 'S');
