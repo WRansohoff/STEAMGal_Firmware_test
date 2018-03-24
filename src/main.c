@@ -99,8 +99,6 @@ int main(void) {
   // Pins A2, A3 use the EXTI2_3 interrupt.
   // Pins A4, A5, A6, and A7 use the EXTI4_15 interrupt.
   // Map EXTI lines to the GPIOA port.
-  // TODO: Get EXTI/NVIC lines working for buttons with LL/HAL.
-  /*
   LL_SYSCFG_SetEXTISource(LL_SYSCFG_EXTI_PORTA,
                           LL_SYSCFG_EXTI_LINE2);
   LL_SYSCFG_SetEXTISource(LL_SYSCFG_EXTI_PORTA,
@@ -113,86 +111,26 @@ int main(void) {
                           LL_SYSCFG_EXTI_LINE6);
   LL_SYSCFG_SetEXTISource(LL_SYSCFG_EXTI_PORTA,
                           LL_SYSCFG_EXTI_LINE7);
-  // Configure EXTI lines 2-7 to trigger on a falling edge.
-  LL_EXTI_EnableFallingTrig_0_31(LL_EXTI_LINE_2 |
-                                 LL_EXTI_LINE_3 |
-                                 LL_EXTI_LINE_4 |
-                                 LL_EXTI_LINE_5 |
-                                 LL_EXTI_LINE_6 |
-                                 LL_EXTI_LINE_7);
-  // Enable EXTI lines 2-7.
-  LL_EXTI_EnableIT_0_31(LL_EXTI_LINE_2 |
-                        LL_EXTI_LINE_3 |
-                        LL_EXTI_LINE_4 |
-                        LL_EXTI_LINE_5 |
-                        LL_EXTI_LINE_6 |
-                        LL_EXTI_LINE_7);
-  // The last parameter in this function literally does nothing.
-  HAL_NVIC_SetPriority(EXTI2_3_IRQn, 0x03, 0);
-  HAL_NVIC_EnableIRQ(EXTI2_3_IRQn);
-  HAL_NVIC_SetPriority(EXTI4_15_IRQn, 0x03, 0);
-  HAL_NVIC_EnableIRQ(EXTI4_15_IRQn);
-  */
+  exti_init_struct.Line_0_31 = (LL_EXTI_LINE_2 |
+                                LL_EXTI_LINE_3 |
+                                LL_EXTI_LINE_4 |
+                                LL_EXTI_LINE_5 |
+                                LL_EXTI_LINE_6 |
+                                LL_EXTI_LINE_7);
+  exti_init_struct.LineCommand = ENABLE;
+  exti_init_struct.Mode = LL_EXTI_MODE_IT;
+  exti_init_struct.Trigger = LL_EXTI_TRIGGER_FALLING;
+  LL_EXTI_Init(&exti_init_struct);
+  // (The last parameter in this function literally does nothing.)
+  NVIC_SetPriority(EXTI2_3_IRQn, 0x03);
+  NVIC_EnableIRQ(EXTI2_3_IRQn);
+  NVIC_SetPriority(EXTI4_15_IRQn, 0x03);
+  NVIC_EnableIRQ(EXTI4_15_IRQn);
 
   while (1) {
     draw_test_menu();
     // Communicate the framebuffer to the OLED screen.
     i2c_display_framebuffer(0x40005400, &oled_fb);
-
-    // Check each button state.
-    // TODO: Use interrupts instead.
-    if (~GPIOA->IDR & LL_GPIO_PIN_2) {
-      // 'Left' button.
-      if (menu_state == TEST_MENU_SOUND_BUZZER) {
-        menu_state = TEST_MENU_LED_TOGGLE;
-      }
-      else if (menu_state == TEST_MENU_BUZZER_TONE) {
-        buzzer_tone_hz -= 500;
-        if (buzzer_tone_hz <= 0) {
-          buzzer_tone_hz = 500;
-        }
-      }
-    }
-    if (~GPIOA->IDR & LL_GPIO_PIN_3) {
-      // 'Up' button.
-      if (menu_state == TEST_MENU_BUZZER_TONE) {
-        menu_state = last_top_row;
-      }
-    }
-    if (~GPIOA->IDR & LL_GPIO_PIN_4) {
-      // 'Down' button.
-      if (menu_state == TEST_MENU_LED_TOGGLE ||
-          menu_state == TEST_MENU_SOUND_BUZZER) {
-        last_top_row = menu_state;
-        menu_state = TEST_MENU_BUZZER_TONE;
-      }
-    }
-    if (~GPIOA->IDR & LL_GPIO_PIN_5) {
-      // 'Right' button.
-      if (menu_state == TEST_MENU_LED_TOGGLE) {
-        menu_state = TEST_MENU_SOUND_BUZZER;
-      }
-      else if (menu_state == TEST_MENU_BUZZER_TONE) {
-        buzzer_tone_hz += 500;
-        if (buzzer_tone_hz >= 25000) {
-          buzzer_tone_hz = 25000;
-        }
-      }
-    }
-    if (~GPIOA->IDR & LL_GPIO_PIN_6) {
-      // 'B' button.
-      // Currently, do nothing.
-    }
-    if (~GPIOA->IDR & LL_GPIO_PIN_7) {
-      // 'A' button.
-      // Action depends on menu state.
-      if (menu_state == TEST_MENU_LED_TOGGLE) {
-        uled_state = !uled_state;
-      }
-      else if (menu_state == TEST_MENU_SOUND_BUZZER) {
-        buzzer_state = 1;
-      }
-    }
 
     // Set the onboard LED.
     if (uled_state) {

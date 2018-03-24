@@ -6,8 +6,6 @@
 // Core includes.
 #include "stm32f0xx.h"
 #include "stm32_assert.h"
-// HAL includes.
-#include "stm32f0xx_hal_cortex.h"
 // LL includes.
 #include "stm32f0xx_ll_exti.h"
 #include "stm32f0xx_ll_gpio.h"
@@ -36,6 +34,9 @@ volatile unsigned int  buzzer_pulses;
 volatile int menu_state;
 volatile int last_top_row;
 volatile unsigned char draw_color;
+
+// Global EXTI initialization struct.
+LL_EXTI_InitTypeDef exti_init_struct;
 
 // Buffer for the OLED screen.
 // Currently only supports 128x64-px monochrome.

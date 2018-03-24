@@ -14,10 +14,10 @@
  * EXTI0_1: Handle interrupt lines 0 and 1.
  */
 void EXTI0_1_IRQ_handler(void) {
-if (LL_EXTI_ReadFlag_0_31(LL_EXTI_LINE_0) != RESET) {
+if (LL_EXTI_ReadFlag_0_31(LL_EXTI_LINE_0)) {
   LL_EXTI_ClearFlag_0_31(LL_EXTI_LINE_0);
 }
-if (LL_EXTI_ReadFlag_0_31(LL_EXTI_LINE_1) != RESET) {
+if (LL_EXTI_ReadFlag_0_31(LL_EXTI_LINE_1)) {
   LL_EXTI_ClearFlag_0_31(LL_EXTI_LINE_1);
 }
 return;
@@ -27,7 +27,7 @@ return;
  * EXTI2_3: Handle interrupt lines 2 and 3.
  */
 void EXTI2_3_IRQ_handler(void) {
-if (LL_EXTI_ReadFlag_0_31(LL_EXTI_LINE_2) != RESET) {
+if (LL_EXTI_ReadFlag_0_31(LL_EXTI_LINE_2)) {
   LL_EXTI_ClearFlag_0_31(LL_EXTI_LINE_2);
   // 'Left' button.
   if (menu_state == TEST_MENU_SOUND_BUZZER) {
@@ -40,7 +40,7 @@ if (LL_EXTI_ReadFlag_0_31(LL_EXTI_LINE_2) != RESET) {
     }
   }
 }
-if (LL_EXTI_ReadFlag_0_31(LL_EXTI_LINE_3) != RESET) {
+if (LL_EXTI_ReadFlag_0_31(LL_EXTI_LINE_3)) {
   LL_EXTI_ClearFlag_0_31(LL_EXTI_LINE_3);
   // 'Up' button.
   if (menu_state == TEST_MENU_BUZZER_TONE) {
@@ -54,7 +54,7 @@ return;
  * EXTI4_15: Handle interrupt lines between [4:15], inclusive.
  */
 void EXTI4_15_IRQ_handler(void) {
-if (LL_EXTI_ReadFlag_0_31(LL_EXTI_LINE_4) != RESET) {
+if (LL_EXTI_ReadFlag_0_31(LL_EXTI_LINE_4)) {
   LL_EXTI_ClearFlag_0_31(LL_EXTI_LINE_4);
   // 'Down' button.
   if (menu_state == TEST_MENU_LED_TOGGLE ||
@@ -63,7 +63,7 @@ if (LL_EXTI_ReadFlag_0_31(LL_EXTI_LINE_4) != RESET) {
     menu_state = TEST_MENU_BUZZER_TONE;
   }
 }
-if (LL_EXTI_ReadFlag_0_31(LL_EXTI_LINE_5) != RESET) {
+if (LL_EXTI_ReadFlag_0_31(LL_EXTI_LINE_5)) {
   LL_EXTI_ClearFlag_0_31(LL_EXTI_LINE_5);
   // 'Right' button.
   if (menu_state == TEST_MENU_LED_TOGGLE) {
@@ -76,12 +76,12 @@ if (LL_EXTI_ReadFlag_0_31(LL_EXTI_LINE_5) != RESET) {
     }
   }
 }
-if (LL_EXTI_ReadFlag_0_31(LL_EXTI_LINE_6) != RESET) {
+if (LL_EXTI_ReadFlag_0_31(LL_EXTI_LINE_6)) {
   LL_EXTI_ClearFlag_0_31(LL_EXTI_LINE_6);
   // 'B' button.
   // Currently, do nothing.
 }
-if (LL_EXTI_ReadFlag_0_31(LL_EXTI_LINE_7) != RESET) {
+if (LL_EXTI_ReadFlag_0_31(LL_EXTI_LINE_7)) {
   LL_EXTI_ClearFlag_0_31(LL_EXTI_LINE_7);
   // 'A' button.
   // Action depends on menu state.
@@ -92,28 +92,28 @@ if (LL_EXTI_ReadFlag_0_31(LL_EXTI_LINE_7) != RESET) {
     buzzer_state = 1;
   }
 }
-if (LL_EXTI_ReadFlag_0_31(LL_EXTI_LINE_8) != RESET) {
+if (LL_EXTI_ReadFlag_0_31(LL_EXTI_LINE_8)) {
   LL_EXTI_ClearFlag_0_31(LL_EXTI_LINE_8);
 }
-if (LL_EXTI_ReadFlag_0_31(LL_EXTI_LINE_9) != RESET) {
+if (LL_EXTI_ReadFlag_0_31(LL_EXTI_LINE_9)) {
   LL_EXTI_ClearFlag_0_31(LL_EXTI_LINE_9);
 }
-if (LL_EXTI_ReadFlag_0_31(LL_EXTI_LINE_10) != RESET) {
+if (LL_EXTI_ReadFlag_0_31(LL_EXTI_LINE_10)) {
   LL_EXTI_ClearFlag_0_31(LL_EXTI_LINE_10);
 }
-if (LL_EXTI_ReadFlag_0_31(LL_EXTI_LINE_11) != RESET) {
+if (LL_EXTI_ReadFlag_0_31(LL_EXTI_LINE_11)) {
   LL_EXTI_ClearFlag_0_31(LL_EXTI_LINE_11);
 }
-if (LL_EXTI_ReadFlag_0_31(LL_EXTI_LINE_12) != RESET) {
+if (LL_EXTI_ReadFlag_0_31(LL_EXTI_LINE_12)) {
   LL_EXTI_ClearFlag_0_31(LL_EXTI_LINE_12);
 }
-if (LL_EXTI_ReadFlag_0_31(LL_EXTI_LINE_13) != RESET) {
+if (LL_EXTI_ReadFlag_0_31(LL_EXTI_LINE_13)) {
   LL_EXTI_ClearFlag_0_31(LL_EXTI_LINE_13);
 }
-if (LL_EXTI_ReadFlag_0_31(LL_EXTI_LINE_14) != RESET) {
+if (LL_EXTI_ReadFlag_0_31(LL_EXTI_LINE_14)) {
   LL_EXTI_ClearFlag_0_31(LL_EXTI_LINE_14);
 }
-if (LL_EXTI_ReadFlag_0_31(LL_EXTI_LINE_15) != RESET) {
+if (LL_EXTI_ReadFlag_0_31(LL_EXTI_LINE_15)) {
   LL_EXTI_ClearFlag_0_31(LL_EXTI_LINE_15);
 }
 return;

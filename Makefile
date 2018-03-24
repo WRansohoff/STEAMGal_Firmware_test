@@ -11,8 +11,7 @@ ifeq ($(MCU), STM32F051K8)
 	MCU_PERIPH_CLASS = STM32F051
 	MCU_HAL_CLASS = STM32F051x8
 else ifeq ($(MCU), STM32L051K8)
-	# TODO: The L0-series will require moving from
-	# standard peripheral libraries to the CubeMX HAL.
+	# TODO: Support the L0-series.
 	CHIP_FILE = STM32L051K8T6
 	MCU_CLASS = L0
 	MCU_PERIPH_CLASS = STM32L051
@@ -70,7 +69,7 @@ CFLAGS += --specs=nosys.specs
 # Custom flags for preprocessor definitions:
 CFLAGS += -D$(MCU)
 CFLAGS += -DVVC_$(MCU_CLASS)
-CFLAGS += -DUSE_STDPERIPH_DRIVER
+CFLAGS += -DUSE_FULL_LL_DRIVER
 CFLAGS += -D$(MCU_PERIPH_CLASS)
 CFLAGS += -D$(MCU_HAL_CLASS)
 
@@ -97,10 +96,8 @@ C_SRC  += ./src/util_c.c
 C_SRC  += ./src/interrupts_c.c
 # TODO: Non-F0 chips.
 # HAL and LL libs.
-C_SRC  += ./src/hal_libs/stm32f0xx_hal_cortex.c
 C_SRC  += ./src/hal_libs/stm32f0xx_ll_exti.c
 C_SRC  += ./src/hal_libs/stm32f0xx_ll_gpio.c
-## STD_PERIPH_SRCS
 
 # (other header file directories, if any)
 INCLUDE =  -I./src
