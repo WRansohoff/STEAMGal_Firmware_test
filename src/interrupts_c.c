@@ -10,6 +10,9 @@
  * at the same time, but not on pins A1 (EXTI line 1)
  * and B1 (EXTI line 1), since they share the same interrupt line.
  */
+
+#ifdef VVC_F0
+// STM32F0xx EXTI lines.
 /*
  * EXTI0_1: Handle interrupt lines 0 and 1.
  */
@@ -118,3 +121,84 @@ if (LL_EXTI_ReadFlag_0_31(LL_EXTI_LINE_15)) {
 }
 return;
 }
+
+
+#elif VVC_F3
+// STM32F3xx(?) EXTI lines.
+// TODO: Move common code between F0/F3 to their own methods.
+// But for testing...
+void EXTI2_touchsense_IRQ_handler(void) {
+if (LL_EXTI_ReadFlag_0_31(LL_EXTI_LINE_2)) {
+  LL_EXTI_ClearFlag_0_31(LL_EXTI_LINE_2);
+  // 'Left' button.
+  if (menu_state == TEST_MENU_SOUND_BUZZER) {
+    menu_state = TEST_MENU_LED_TOGGLE;
+  }
+  else if (menu_state == TEST_MENU_BUZZER_TONE) {
+    buzzer_tone_hz -= 500;
+    if (buzzer_tone_hz <= 0) {
+      buzzer_tone_hz = 500;
+    }
+  }
+}
+return;
+}
+
+void EXTI3_IRQ_handler(void) {
+if (LL_EXTI_ReadFlag_0_31(LL_EXTI_LINE_3)) {
+  LL_EXTI_ClearFlag_0_31(LL_EXTI_LINE_3);
+  // 'Up' button.
+  if (menu_state == TEST_MENU_BUZZER_TONE) {
+    menu_state = last_top_row;
+  }
+}
+return;
+}
+
+void EXTI4_IRQ_handler(void) {
+if (LL_EXTI_ReadFlag_0_31(LL_EXTI_LINE_4)) {
+  LL_EXTI_ClearFlag_0_31(LL_EXTI_LINE_4);
+  // 'Down' button.
+  if (menu_state == TEST_MENU_LED_TOGGLE ||
+      menu_state == TEST_MENU_SOUND_BUZZER) {
+    last_top_row = menu_state;
+    menu_state = TEST_MENU_BUZZER_TONE;
+  }
+}
+return;
+}
+
+void EXTI5_9_IRQ_handler(void) {
+if (LL_EXTI_ReadFlag_0_31(LL_EXTI_LINE_5)) {
+  LL_EXTI_ClearFlag_0_31(LL_EXTI_LINE_5);
+  // 'Right' button.
+  if (menu_state == TEST_MENU_LED_TOGGLE) {
+    menu_state = TEST_MENU_SOUND_BUZZER;
+  }
+  else if (menu_state == TEST_MENU_BUZZER_TONE) {
+    buzzer_tone_hz += 500;
+    if (buzzer_tone_hz >= 25000) {
+      buzzer_tone_hz = 25000;
+    }
+  }
+}
+if (LL_EXTI_ReadFlag_0_31(LL_EXTI_LINE_6)) {
+  LL_EXTI_ClearFlag_0_31(LL_EXTI_LINE_6);
+  // 'B' button.
+  // Currently, do nothing.
+}
+if (LL_EXTI_ReadFlag_0_31(LL_EXTI_LINE_7)) {
+  LL_EXTI_ClearFlag_0_31(LL_EXTI_LINE_7);
+  // 'A' button.
+  // Action depends on menu state.
+  if (menu_state == TEST_MENU_LED_TOGGLE) {
+    uled_state = !uled_state;
+  }
+  else if (menu_state == TEST_MENU_SOUND_BUZZER) {
+    buzzer_state = 1;
+  }
+}
+return;
+}
+
+#endif

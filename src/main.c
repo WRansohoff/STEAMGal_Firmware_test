@@ -60,9 +60,15 @@ int main(void) {
   LL_GPIO_SetPinSpeed(GPIOB, LL_GPIO_PIN_0, LL_GPIO_SPEED_FREQ_MEDIUM);
   LL_GPIO_SetPinPull(GPIOB, LL_GPIO_PIN_0, LL_GPIO_PULL_NO);
 
-  // Set GPIO pins B6/B7 as alternate function mode 1 for I2C1.
-  LL_GPIO_SetAFPin_0_7(GPIOB, LL_GPIO_PIN_6, LL_GPIO_AF_1);
-  LL_GPIO_SetAFPin_0_7(GPIOB, LL_GPIO_PIN_7, LL_GPIO_AF_1);
+  #ifdef VVC_F0
+    // Set GPIO pins B6/B7 as alternate function mode 1 for I2C1.
+    LL_GPIO_SetAFPin_0_7(GPIOB, LL_GPIO_PIN_6, LL_GPIO_AF_1);
+    LL_GPIO_SetAFPin_0_7(GPIOB, LL_GPIO_PIN_7, LL_GPIO_AF_1);
+  #elif VVC_F3
+    // Set GPIO pins B6/B7 as alternate function mode 4 for I2C1.
+    LL_GPIO_SetAFPin_0_7(GPIOB, LL_GPIO_PIN_6, LL_GPIO_AF_4);
+    LL_GPIO_SetAFPin_0_7(GPIOB, LL_GPIO_PIN_7, LL_GPIO_AF_4);
+  #endif
   // Setup GPIO pins B6, B7 as open-drain alt. func. w/pullup.
   LL_GPIO_SetPinMode(GPIOB, LL_GPIO_PIN_6, LL_GPIO_MODE_ALTERNATE);
   LL_GPIO_SetPinMode(GPIOB, LL_GPIO_PIN_7, LL_GPIO_MODE_ALTERNATE);
@@ -90,9 +96,9 @@ int main(void) {
 
   // Initialize the I2C peripheral and connected devices.
   // (1MHz @ 48MHz PLL)
-  i2c_periph_init(0x40005400, 0x50100103);
+  i2c_periph_init(I2C1_BASE, 0x50100103);
   // Initialize the SSD1306 OLED display.
-  i2c_init_ssd1306(0x40005400);
+  i2c_init_ssd1306(I2C1_BASE);
 
   // Setup hardware interrupts on the EXTI lines associated
   // with the 6 button inputs.
@@ -121,16 +127,39 @@ int main(void) {
   exti_init_struct.Mode = LL_EXTI_MODE_IT;
   exti_init_struct.Trigger = LL_EXTI_TRIGGER_FALLING;
   LL_EXTI_Init(&exti_init_struct);
-  // (The last parameter in this function literally does nothing.)
-  NVIC_SetPriority(EXTI2_3_IRQn, 0x03);
-  NVIC_EnableIRQ(EXTI2_3_IRQn);
-  NVIC_SetPriority(EXTI4_15_IRQn, 0x03);
-  NVIC_EnableIRQ(EXTI4_15_IRQn);
+
+  // The HAL 'cortex' libraries basically just call these
+  // core functions for NVIC stuff, anyways:
+  #ifdef VVC_F0
+    NVIC_SetPriority(EXTI2_3_IRQn, 0x03);
+    NVIC_EnableIRQ(EXTI2_3_IRQn);
+    NVIC_SetPriority(EXTI4_15_IRQn, 0x03);
+    NVIC_EnableIRQ(EXTI4_15_IRQn);
+  #elif VVC_F3
+    // On Cortex-M4 cores, we need to set an NVIC priority
+    // grouping and subpriorities as well as normal priorities:
+    // 0x07: 0 Pri / 4 SubPri
+    // 0x06: 1 Pri / 3 SubPri
+    // 0x05: 2 Pri / 2 SubPri
+    // 0x04: 3 Pri / 1 SubPri
+    // 0x03: 4 Pri / 0 SubPri
+    // Use 2 bits for 'priority' and 2 bits for 'subpriority'.
+    NVIC_SetPriorityGrouping(0x05);
+    uint32_t exti_pri_encoding = NVIC_EncodePriority(0x05, 0x03, 0x03);
+    NVIC_SetPriority(EXTI2_TSC_IRQn, exti_pri_encoding);
+    NVIC_EnableIRQ(EXTI2_TSC_IRQn);
+    NVIC_SetPriority(EXTI3_IRQn, exti_pri_encoding);
+    NVIC_EnableIRQ(EXTI3_IRQn);
+    NVIC_SetPriority(EXTI4_IRQn, exti_pri_encoding);
+    NVIC_EnableIRQ(EXTI4_IRQn);
+    NVIC_SetPriority(EXTI9_5_IRQn, exti_pri_encoding);
+    NVIC_EnableIRQ(EXTI9_5_IRQn);
+  #endif
 
   while (1) {
     draw_test_menu();
     // Communicate the framebuffer to the OLED screen.
-    i2c_display_framebuffer(0x40005400, &oled_fb);
+    i2c_display_framebuffer(I2C1_BASE, &oled_fb);
 
     // Set the onboard LED.
     if (uled_state) {

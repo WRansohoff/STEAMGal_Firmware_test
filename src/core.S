@@ -9,9 +9,13 @@
 
 .syntax unified
 #ifdef VVC_F0
-    .cpu cortex-m0
+  .cpu cortex-m0
+#elif VVC_L0
+  .cpu cortex-m0plus
+#elif VVC_F1
+  .cpu cortex-m3
 #elif  VVC_F3
-    .cpu cortex-m4
+  .cpu cortex-m4
 #endif
 .fpu softvfp
 .thumb

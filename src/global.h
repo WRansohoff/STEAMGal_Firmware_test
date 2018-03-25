@@ -4,12 +4,23 @@
 #include <stdio.h>
 
 // Core includes.
-#include "stm32f0xx.h"
+#ifdef VVC_F0
+  #include "stm32f0xx.h"
+#elif VVC_F3
+  #include "stm32f3xx.h"
+#endif
 #include "stm32_assert.h"
+
 // LL includes.
-#include "stm32f0xx_ll_exti.h"
-#include "stm32f0xx_ll_gpio.h"
-#include "stm32f0xx_ll_system.h"
+#ifdef VVC_F0
+  #include "stm32f0xx_ll_exti.h"
+  #include "stm32f0xx_ll_gpio.h"
+  #include "stm32f0xx_ll_system.h"
+#elif VVC_F3
+  #include "stm32f3xx_ll_exti.h"
+  #include "stm32f3xx_ll_gpio.h"
+  #include "stm32f3xx_ll_system.h"
+#endif
 
 // Assembly methods.
 extern void i2c_periph_init(unsigned int i2c_addr, unsigned int i2c_speed);

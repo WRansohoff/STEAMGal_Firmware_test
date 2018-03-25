@@ -2,7 +2,9 @@
 TARGET = main
 
 # Default to M0 QFP32 8KB SRAM, 64KB Flash.
-MCU ?= STM32F051K8
+#MCU ?= STM32F051K8
+# Or, M4F QFP32 12KB SRAM, 64KB Flash.
+MCU ?= STM32F303K8
 
 # Linker scripts for memory allocation.
 ifeq ($(MCU), STM32F051K8)
@@ -17,7 +19,6 @@ else ifeq ($(MCU), STM32L051K8)
 	MCU_PERIPH_CLASS = STM32L051
 	MCU_HAL_CLASS = STM32L051x8
 else ifeq ($(MCU), STM32F303K8)
-	# TODO: Support other pin-compatible QFP32 chips.
 	CHIP_FILE = STM32F303K8T6
 	MCU_CLASS = F3
 	MCU_PERIPH_CLASS = STM32F303
@@ -94,15 +95,27 @@ AS_SRC += $(BOOT_FILE)
 C_SRC  += ./src/main.c
 C_SRC  += ./src/util_c.c
 C_SRC  += ./src/interrupts_c.c
-# TODO: Non-F0 chips.
 # HAL and LL libs.
-C_SRC  += ./src/hal_libs/stm32f0xx_ll_exti.c
-C_SRC  += ./src/hal_libs/stm32f0xx_ll_gpio.c
+ifeq ($(MCU_CLASS), F0)
+	C_SRC  += ./src/hal_libs_f0/stm32f0xx_ll_exti.c
+	C_SRC  += ./src/hal_libs_f0/stm32f0xx_ll_gpio.c
+else ifeq ($(MCU_CLASS), L0)
+	# TODO
+else ifeq ($(MCU_CLASS), F3)
+	C_SRC  += ./src/hal_libs_f3/stm32f3xx_ll_exti.c
+	C_SRC  += ./src/hal_libs_f3/stm32f3xx_ll_gpio.c
+endif
 
 # (other header file directories, if any)
-INCLUDE =  -I./src
+INCLUDE =   -I./src
 INCLUDE +=  -I./src/device_headers
-INCLUDE +=  -I./src/hal_libs
+ifeq ($(MCU_CLASS), F0)
+	INCLUDE +=  -I./src/hal_libs_f0
+else ifeq ($(MCU_CLASS), L0)
+	# TODO
+else ifeq ($(MCU_CLASS), F3)
+	INCLUDE +=  -I./src/hal_libs_f3
+endif
 
 OBJS =  $(AS_SRC:.S=.o)
 OBJS += $(C_SRC:.c=.o)
