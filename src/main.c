@@ -13,6 +13,7 @@ int main(void) {
   menu_state = TEST_MENU_LED_TOGGLE;
   last_top_row = TEST_MENU_LED_TOGGLE;
   draw_color = 0;
+  last_adc_value = 0;
 
   // Enable the GPIOA clock (buttons on pins A2-A7,
   // user LED on pin A12).
@@ -24,6 +25,12 @@ int main(void) {
   RCC->APB1ENR |= RCC_APB1ENR_I2C1EN;
   // Enable the SYSCFG clock for hardware interrupts.
   RCC->APB2ENR |= RCC_APB2ENR_SYSCFGEN;
+  // Enable the ADC1 clock for Analog/Digital Conversion.
+  #ifdef VVC_F0
+    RCC->APB2ENR |= RCC_APB2ENR_ADC1EN;
+  #elif VVC_F3
+    RCC->AHBENR  |= RCC_AHBENR_ADC12EN;
+  #endif
 
   // Setup GPIO pins A2, A3, A4, A5, A6, and A7 as inputs
   // with pullups, low-speed.
@@ -93,12 +100,52 @@ int main(void) {
    * as they have different addresses.
    * (The screen's address is 0x78)
    */
+  // Setup pin A1 for ADC input.
+  LL_GPIO_SetPinMode(GPIOA, LL_GPIO_PIN_1, LL_GPIO_MODE_ANALOG);
+  LL_GPIO_SetPinSpeed(GPIOA, LL_GPIO_PIN_1, LL_GPIO_SPEED_FREQ_HIGH);
+  LL_GPIO_SetPinPull(GPIOA, LL_GPIO_PIN_1, LL_GPIO_PULL_NO);
 
   // Initialize the I2C peripheral and connected devices.
   // (1MHz @ 48MHz PLL)
   i2c_periph_init(I2C1_BASE, 0x50100103);
   // Initialize the SSD1306 OLED display.
   i2c_init_ssd1306(I2C1_BASE);
+
+  // Initialize the ADC peripheral for listening on pin A1.
+  // (F3xx: ADC1 Channel 2, F0xx: ADC[1] Channel 1)
+  // For now, only use 12-bit resolution.
+  // Don't use any low-power modes for now, but they look
+  // interesting - TODO: investigate.
+  #ifdef VVC_F0
+    // Initialize the core ADC settings.
+    adc_init_struct.Clock = LL_ADC_CLOCK_SYNC_PCLK_DIV4;
+    adc_init_struct.Resolution = LL_ADC_RESOLUTION_12B;
+    adc_init_struct.DataAlignment = LL_ADC_DATA_ALIGN_RIGHT;
+    adc_init_struct.LowPowerMode = LL_ADC_LP_MODE_NONE;
+    // (TODO: Check that 'SUCCESS' is returned)
+    LL_ADC_Init(ADC1, &adc_init_struct);
+    // Set the ADC group regular sequencer.
+    LL_ADC_REG_SetSequencerChannels(ADC1, LL_ADC_CHANNEL_1);
+    // Set the ADC channel sampling time.
+    LL_ADC_SetSamplingTimeCommonChannels(ADC1, LL_ADC_SAMPLINGTIME_239CYCLES_5);
+    // Enable the ADC.
+    LL_ADC_Enable(ADC1);
+  #elif  VVC_F3
+    // Initialize the core ADC settings.
+    // On the F303, use the PCLK synchronously.
+    LL_ADC_SetCommonClock(ADC12_COMMON, LL_ADC_CLOCK_SYNC_PCLK_DIV1);
+    adc_init_struct.Resolution = LL_ADC_RESOLUTION_12B;
+    adc_init_struct.DataAlignment = LL_ADC_DATA_ALIGN_RIGHT;
+    adc_init_struct.LowPowerMode = LL_ADC_LP_MODE_NONE;
+    // (TODO: Check that 'SUCCESS' is returned)
+    LL_ADC_Init(ADC1, &adc_init_struct);
+    // Set the ADC group regular sequencer.
+    LL_ADC_REG_SetSequencerRanks(ADC1, LL_ADC_REG_RANK_1, LL_ADC_CHANNEL_2);
+    // Set the ADC channel sampling time.
+    LL_ADC_SetChannelSamplingTime(ADC1, LL_ADC_CHANNEL_2, LL_ADC_SAMPLINGTIME_181CYCLES_5);
+    // Enable the ADC.
+    LL_ADC_Enable(ADC1);
+  #endif
 
   // Setup hardware interrupts on the EXTI lines associated
   // with the 6 button inputs.
@@ -160,6 +207,13 @@ int main(void) {
     draw_test_menu();
     // Communicate the framebuffer to the OLED screen.
     i2c_display_framebuffer(I2C1_BASE, &oled_fb);
+
+    // Read the given ADC channel.
+    LL_ADC_REG_StartConversion(ADC1);
+    // Wait for the conversion to finish.
+    while (LL_ADC_REG_IsConversionOngoing(ADC1)) {}
+    // Read the converted value.
+    last_adc_value = LL_ADC_REG_ReadConversionData12(ADC1);
 
     // Set the onboard LED.
     if (uled_state) {

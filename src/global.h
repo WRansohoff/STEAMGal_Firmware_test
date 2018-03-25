@@ -13,10 +13,12 @@
 
 // LL includes.
 #ifdef VVC_F0
+  #include "stm32f0xx_ll_adc.h"
   #include "stm32f0xx_ll_exti.h"
   #include "stm32f0xx_ll_gpio.h"
   #include "stm32f0xx_ll_system.h"
 #elif VVC_F3
+  #include "stm32f3xx_ll_adc.h"
   #include "stm32f3xx_ll_exti.h"
   #include "stm32f3xx_ll_gpio.h"
   #include "stm32f3xx_ll_system.h"
@@ -45,7 +47,10 @@ volatile unsigned int  buzzer_pulses;
 volatile int menu_state;
 volatile int last_top_row;
 volatile unsigned char draw_color;
+volatile uint16_t last_adc_value;
 
+// Global ADC initialization struct.
+LL_ADC_InitTypeDef  adc_init_struct;
 // Global EXTI initialization struct.
 LL_EXTI_InitTypeDef exti_init_struct;
 

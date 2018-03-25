@@ -2,9 +2,9 @@
 TARGET = main
 
 # Default to M0 QFP32 8KB SRAM, 64KB Flash.
-#MCU ?= STM32F051K8
+MCU ?= STM32F051K8
 # Or, M4F QFP32 12KB SRAM, 64KB Flash.
-MCU ?= STM32F303K8
+#MCU ?= STM32F303K8
 
 # Linker scripts for memory allocation.
 ifeq ($(MCU), STM32F051K8)
@@ -97,11 +97,13 @@ C_SRC  += ./src/util_c.c
 C_SRC  += ./src/interrupts_c.c
 # HAL and LL libs.
 ifeq ($(MCU_CLASS), F0)
+	C_SRC  += ./src/hal_libs_f0/stm32f0xx_ll_adc.c
 	C_SRC  += ./src/hal_libs_f0/stm32f0xx_ll_exti.c
 	C_SRC  += ./src/hal_libs_f0/stm32f0xx_ll_gpio.c
 else ifeq ($(MCU_CLASS), L0)
 	# TODO
 else ifeq ($(MCU_CLASS), F3)
+	C_SRC  += ./src/hal_libs_f3/stm32f3xx_ll_adc.c
 	C_SRC  += ./src/hal_libs_f3/stm32f3xx_ll_exti.c
 	C_SRC  += ./src/hal_libs_f3/stm32f3xx_ll_gpio.c
 endif
